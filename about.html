@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Про нас</title>
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #111;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 20px;
+    background: #1a1a1a;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: #1a1a1a;
+}   
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    transition: 0.3s;
+}
+
+.github {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.active:hover {
+    color: #00ff99;
+}
+
+.github:hover {
+    color: #00ff99;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 40px;
+}
+
+p {
+    max-width: 800px;
+    margin: 20px auto;
+    line-height: 1.6;
+    padding: 0 20px;
+}
+
+</style>
+
+<body>
+    <nav>
+        <div>🚗 AutoCatalog</div>
+        <div>
+            <a href="index.html" class="active">Головна</a>
+            <!-- <a href="favorites.html" class="active">Обране</a> -->
+            <!-- <a href="cart.html" class="active">Кошик</a> -->
+            <!-- <a href="login.html" class="active">Увійти</a> -->
+        </div>
+    </nav>
+
+    <div class="about">
+        <h1>Про проєкт AutoCatalog</h1>
+        <p>AutoCatalog - це навчальний проєкт. Це сайт НЕ Є справжнім сайтом для купівлі/продажу автомобілів. Всі ціни можуть не співпадати з реальними. Фото запозичені з інших сайтів для продажу автомобілів, а саме такі як: AutoRia, AutoScout24, OLX та інші...</p>
+        <p>Цей проєкт створений для практики та демонстрації навичок у веб-розробці. Він не має комерційної мети і не призначений для реального використання. Номера телефонів так gmail аккаунти не є реальними.</p>
+        <p>GitHub автора: <a href="https://github.com/CrazyDoctor56" class="github">https://github.com/CrazyDoctor56</a></p>
+        <p>Дякую за увагу!</p>
+    </div>
+<footer>
+    <p>+380 77 100 88 66</p>
+    <p>autocatalog@gmail.com</p>
+    <p>© 2026 AutoCatalog</p>
+    <!-- <a href="about.html" class="active">Про нас</a> -->
+</footer>
+</body>
+</html>

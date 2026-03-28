@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>AutoCatalog</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #111;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    width: 95%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: rgba(0,0,0,0.6);
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: #00ff99;
+}
+
+footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 20px;
+    background: #1a1a1a;
+}
+
+/* верх */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.filter-btn {
+    background: #00ff99;
+    color: black;
+    padding: 14px 50px;
+    border-radius: 25px;
+    font-size: 16px;
+}
+
+/* фільтри */
+.filters {
+    background: #1a1a1a;
+    border-radius: 15px;
+    margin-bottom: 20px;
+
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.4s ease;
+}
+
+.filters.active {
+    max-height: 500px;
+    padding: 20px;
+}
+
+.filters-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filters input,
+.filters select {
+    padding: 14px 18px;
+    border-radius: 20px;
+    border: none;
+    background: #222;
+    color: white;
+    min-width: 180px;
+    font-size: 15px;
+}
+
+.filters button {
+    background: #00ff99;
+    color: black;
+    border-radius: 20px;
+    padding: 14px 95px;
+    font-size: 15px;
+}
+
+/* карточки */
+.cars {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.car {
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.car:hover {
+    transform: translateY(-5px);
+}
+
+.car img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.car-info {
+    padding: 10px;
+}
+
+.price {
+    color: #00ff99;
+    font-weight: bold;
+}
+
+/* адаптив */
+@media (max-width: 768px) {
+    .filters-content {
+        flex-direction: column;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.car img {
+    height: 180px;
+}
+
+.car-info {
+    padding: 15px;
+}
+
+.car h3 {
+    font-size: 18px;
+}
+
+/* .page-title h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-align: center;
+} */
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div>AutoCatalog</div>
+    <div>
+        <a href="index.html">Головна</a>
+        <a href="favorites.html">Обране</a>
+        <a href="cart.html">Кошик</a>
+        <a href="login.html">Увійти</a>
+    </div>
+</nav>
+<div class="container">
+    <!-- <div class="page-title">
+        <h1>Топ Автомобілів</h1>
+    </div> -->
+    <div class="top-bar">
+        <button class="filter-btn" onclick="toggleFilters()">Фільтри</button>
+    </div>
+
+    <div id="filters" class="filters">
+        <div class="filters-content">
+            <input type="text" placeholder="Марка">
+            <input type="number" placeholder="Рік від">
+            <input type="number" placeholder="Рік до">
+            <input type="number" placeholder="Ціна від ($)">
+            <input type="number" placeholder="Ціна до ($)">
+            
+            <select>
+                <option value="">Паливо</option>
+                <option value="бензин">Бензин</option>
+                <option value="дизель">Дизель</option>
+                <option value="електро">Електро</option>
+            </select>
+
+            <button onclick="goSearch()">Пошук</button>
+        </div>
+    </div>
+
+    <div class="cars">
+
+        <a href="car.html?car=bmw_3_series_1986">
+            <div class="car">
+                <img src="pic/bmw_3-series_1986_1.webp">
+                <div class="car-info">
+                    <h3>BMW 3 Series</h3>
+                    <p>1986 • бензин</p>
+                    <p class="price">$2200</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="car.html?car=bmw_7_series_1999">
+            <div class="car">
+                <img src="pic/bmw_7-series_1999_1.webp">
+                <div class="car-info">
+                    <h3>BMW 7 Series</h3>
+                    <p>1999 • бензин</p>
+                    <p class="price">$2800</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="car.html?car=skoda_enyaq_iv_2025">
+            <div class="car">
+                <img src="pic/skoda-enyaq-iv_2025_1.webp">
+                <div class="car-info">
+                    <h3>Skoda Enyaq IV</h3>
+                    <p>2025 • електро</p>
+                    <p class="price">$42437</p>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>+380 77 100 88 66</p>
+    <p>autocatalog@gmail.com</p>
+    <p>© 2026 AutoCatalog</p>
+    <a href="about.html">Про нас</a>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
