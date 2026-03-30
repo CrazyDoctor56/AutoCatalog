@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCatalog — Авто</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🚗 AutoCatalog</div>
+    <div class="nav-links">
+        <a href="/" data-lang="nav_home">Головна</a>
+        <a href="/favorites" data-lang="nav_favorites">Обране</a>
+        <a href="/cart" data-lang="nav_cart">Кошик</a>
+        <a href="/login" data-lang="nav_login">Увійти</a>
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="ua">UA 🇺🇦</option>
+            <option value="en">EN 🇬🇧</option>
+        </select>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1 data-lang="cars_title">Топ автомобілів</h1>
+    </div>
+
+    <div class="top-bar">
+        <button class="btn btn-primary" onclick="toggleFilters()" data-lang="filters_btn">Фільтри</button>
+        <input type="text" placeholder="Пошук авто..." class="search-input" id="searchInput" data-lang-placeholder="search_placeholder">
+    </div>
+
+    <div id="filters" class="filters">
+        <div class="filters-content">
+            <input type="text" id="filterBrand" data-lang-placeholder="filter_brand" placeholder="Марка">
+            <input type="text" id="filterYearFrom" data-lang-placeholder="filter_year_from" placeholder="Рік від">
+            <input type="text" id="filterYearTo" data-lang-placeholder="filter_year_to" placeholder="Рік до">
+            <input type="text" id="filterPriceFrom" data-lang-placeholder="filter_price_from" placeholder="Ціна від ($)">
+            <input type="text" id="filterPriceTo" data-lang-placeholder="filter_price_to" placeholder="Ціна до ($)">
+            <select id="filterFuel">
+                <option value="" data-lang="filter_fuel_all">Паливо</option>
+                <option value="бензин" data-lang="filter_fuel_petrol">Бензин</option>
+                <option value="дизель" data-lang="filter_fuel_diesel">Дизель</option>
+                <option value="електро" data-lang="filter_fuel_electric">Електро</option>
+            </select>
+            <button class="btn btn-primary" onclick="applyFilters()" data-lang="search_btn">Пошук</button>
+        </div>
+    </div>
+
+    <!-- Картки авто — будуть рендеритись через JS (або Flask) -->
+    <div class="cars-grid" id="carsGrid">
+
+        <a href="car?car=bmw_3_series_1986">
+            <div class="car-card">
+                <img src="/static/pic/bmw_3-series_1986_1.webp" alt="BMW 3 Series">
+                <div class="car-card-info">
+                    <h3>BMW 3 Series</h3>
+                    <p>1986 • бензин</p>
+                    <p class="price">$2 200</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="car?car=bmw_7_series_1999">
+            <div class="car-card">
+                <img src="/static/pic/bmw_7-series_1999_1.webp" alt="BMW 7 Series">
+                <div class="car-card-info">
+                    <h3>BMW 7 Series</h3>
+                    <p>1999 • бензин</p>
+                    <p class="price">$2 800</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="car?car=skoda_enyaq_iv_2025">
+            <div class="car-card">
+                <img src="/static/pic/skoda-enyaq-iv_2025_1.webp" alt="Skoda Enyaq IV">
+                <div class="car-card-info">
+                    <h3>Skoda Enyaq IV</h3>
+                    <p>2025 • електро</p>
+                    <p class="price">$42 437</p>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-info">
+            <p>+380 77 100 88 66</p>
+            <p>autocatalog@gmail.com</p>
+        </div>
+        <div class="footer-socials">
+            <a href="https://t.me" target="_blank"><img src="/static/icons/telegram.svg"></a>
+            <a href="https://instagram.com" target="_blank"><img src="/static/icons/instagram.svg"></a>
+            <a href="https://viber.com" target="_blank"><img src="/static/icons/viber.svg"></a>
+        </div>
+        <div class="footer-bottom">
+            <a href="/about" class="footer-link" data-lang="footer_about">Про нас</a>
+            <p>© 2026 AutoCatalog</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/js/lang.js"></script>
+<script src="/static/js/script.js"></script>
+</body>
+</html>

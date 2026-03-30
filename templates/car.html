@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCatalog — Авто</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">🚗 AutoCatalog</div>
+    <div class="nav-links">
+        <a href="/" data-lang="nav_home">Головна</a>
+        <a href="/cars" data-lang="nav_cars">Авто</a>
+        <a href="/favorites" data-lang="nav_favorites">Обране</a>
+        <a href="/cart" data-lang="nav_cart">Кошик</a>
+        <a href="/login" data-lang="nav_login">Увійти</a>
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="ua">UA 🇺🇦</option>
+            <option value="en">EN 🇬🇧</option>
+        </select>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="car-detail">
+        <!-- Галерея -->
+        <div class="car-detail-gallery">
+            <img id="carMainImage" src="" alt="Авто">
+        </div>
+
+        <!-- Інформація -->
+        <div class="car-detail-info">
+            <h1 id="carName">Завантаження...</h1>
+            <p class="price" id="carPrice"></p>
+
+            <ul class="car-specs" id="carSpecs">
+                <!-- заповнюється через car.js -->
+            </ul>
+
+            <div class="car-actions">
+                <button class="btn btn-primary" onclick="addToCart(carId)" data-lang="btn_cart">Додати в кошик</button>
+                <button class="btn btn-outline" onclick="addToFavorites(carId)" data-lang="btn_fav">В обране</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-info">
+            <p>+380 77 100 88 66</p>
+            <p>autocatalog@gmail.com</p>
+        </div>
+        <div class="footer-socials">
+            <a href="https://t.me" target="_blank"><img src="/static/icons/telegram.svg"></a>
+            <a href="https://instagram.com" target="_blank"><img src="/static/icons/instagram.svg"></a>
+            <a href="https://viber.com" target="_blank"><img src="/static/icons/viber.svg"></a>
+        </div>
+        <div class="footer-bottom">
+            <a href="/about" class="footer-link" data-lang="footer_about">Про нас</a>
+            <p>© 2026 AutoCatalog</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/js/lang.js"></script>
+<script src="/static/js/script.js"></script>
+<script src="/static/js/car.js"></script>
+</body>
+</html>
