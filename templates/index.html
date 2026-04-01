@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoCatalog — Найкращі авто з Європи</title>
+    <title>AutoCatalog</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        /* Стилі тільки для головної сторінки */
         .hero {
             height: 90vh;
             display: flex;
@@ -16,19 +15,16 @@
             background: url("/static/pic/banner_audi_golovna.jpg") no-repeat center/cover;
             position: relative;
         }
-
         .hero::before {
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.55);
+            background: rgba(0,0,0,0.55);
         }
-
         .hero-content {
             position: relative;
             z-index: 1;
         }
-
         .hero-content h1 {
             font-family: 'Rajdhani', sans-serif;
             font-size: 56px;
@@ -36,13 +32,11 @@
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
-
         .hero-content p {
             color: #ccc;
             font-size: 18px;
             margin-bottom: 25px;
         }
-
         .hero-search {
             display: flex;
             gap: 10px;
@@ -61,8 +55,8 @@
         <a href="/cart" data-lang="nav_cart">Кошик</a>
         <a href="/login" data-lang="nav_login">Увійти</a>
         <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
@@ -72,7 +66,7 @@
         <h1 data-lang="hero_title">Найкращі автомобілі з Європи</h1>
         <p data-lang="hero_subtitle">Знайди авто своєї мрії</p>
         <div class="hero-search">
-            <input type="text" placeholder="Пошук авто..." class="search-input" id="searchInput" data-lang-placeholder="search_placeholder">
+            <input type="text" class="search-input" id="searchInput" placeholder="Пошук авто..." data-lang-placeholder="search_placeholder">
             <button class="btn btn-primary" onclick="goSearch()" data-lang="search_btn">Знайти</button>
         </div>
     </div>

@@ -13,37 +13,31 @@
     <div class="nav-links">
         <a href="/" data-lang="nav_home">Головна</a>
         <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
 
 <div class="form-container">
     <h2 data-lang="register_title">Реєстрація</h2>
-
     <div class="form-group">
         <label data-lang="register_name">Ім'я</label>
-        <input type="text" id="registerName" data-lang-placeholder="register_name_placeholder" placeholder="Ваше ім'я">
+        <input type="text" id="registerName" placeholder="Ваше ім'я" data-lang-placeholder="register_name_placeholder">
     </div>
-
     <div class="form-group">
         <label data-lang="login_email">Email</label>
         <input type="email" id="registerEmail" placeholder="your@email.com">
     </div>
-
     <div class="form-group">
         <label data-lang="login_password">Пароль</label>
         <input type="password" id="registerPassword" placeholder="••••••••">
     </div>
-
     <div class="form-group">
         <label data-lang="register_confirm">Підтвердити пароль</label>
         <input type="password" id="registerPasswordConfirm" placeholder="••••••••">
     </div>
-
     <button class="btn btn-primary" style="width:100%" onclick="register()" data-lang="register_btn">Зареєструватись</button>
-
     <div class="form-switch">
         <span data-lang="register_have_account">Вже є акаунт?</span>
         <a href="/login" data-lang="nav_login">Увійти</a>

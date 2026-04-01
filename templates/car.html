@@ -5,6 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoCatalog — Авто</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .gallery {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 16/9;
+        }
+        .gallery-track {
+            display: flex;
+            transition: transform 0.4s ease;
+            height: 100%;
+        }
+        .gallery-track img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .gallery-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.55);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 2;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gallery-btn:hover { background: rgba(0,255,153,0.7); color: #000; }
+        .gallery-btn.prev { left: 12px; }
+        .gallery-btn.next { right: 12px; }
+        .gallery-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 2;
+        }
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.45);
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+        }
+        .gallery-dot.active { background: var(--accent); }
+        .gallery-thumbs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .gallery-thumbs img {
+            width: 80px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            opacity: 0.55;
+            transition: opacity 0.2s, outline 0.2s;
+            flex-shrink: 0;
+        }
+        .gallery-thumbs img.active { opacity: 1; outline: 2px solid var(--accent); }
+    </style>
 </head>
 <body>
 
@@ -17,31 +95,30 @@
         <a href="/cart" data-lang="nav_cart">Кошик</a>
         <a href="/login" data-lang="nav_login">Увійти</a>
         <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
 
 <div class="container">
     <div class="car-detail">
-        <!-- Галерея -->
-        <div class="car-detail-gallery">
-            <img id="carMainImage" src="" alt="Авто">
+        <div>
+            <div class="gallery" id="gallery">
+                <div class="gallery-track" id="galleryTrack"></div>
+                <button class="gallery-btn prev" onclick="galleryMove(-1)">&#8249;</button>
+                <button class="gallery-btn next" onclick="galleryMove(1)">&#8250;</button>
+                <div class="gallery-dots" id="galleryDots"></div>
+            </div>
+            <div class="gallery-thumbs" id="galleryThumbs"></div>
         </div>
-
-        <!-- Інформація -->
         <div class="car-detail-info">
             <h1 id="carName">Завантаження...</h1>
             <p class="price" id="carPrice"></p>
-
-            <ul class="car-specs" id="carSpecs">
-                <!-- заповнюється через car.js -->
-            </ul>
-
+            <ul class="car-specs" id="carSpecs"></ul>
             <div class="car-actions">
-                <button class="btn btn-primary" onclick="addToCart(carId)" data-lang="btn_cart">Додати в кошик</button>
-                <button class="btn btn-outline" onclick="addToFavorites(carId)" data-lang="btn_fav">В обране</button>
+                <button class="btn btn-primary" id="btnCart" data-lang="btn_cart">Додати в кошик</button>
+                <button class="btn btn-outline" id="btnFav" data-lang="btn_fav">В обране</button>
             </div>
         </div>
     </div>

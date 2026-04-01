@@ -16,8 +16,8 @@
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/login" data-lang="nav_login">Увійти</a>
         <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
@@ -26,14 +26,10 @@
     <div class="page-title">
         <h1 data-lang="cart_title">Кошик</h1>
     </div>
-
-    <div class="cart-list" id="cartList">
-        <!-- заповнюється через cart.js -->
-    </div>
-
+    <div class="cart-list" id="cartList"></div>
     <div class="cart-total" id="cartTotal" style="display:none">
         <span data-lang="cart_total">Разом:</span>
-        <strong id="cartTotalPrice" style="color: var(--accent)"></strong>
+        <strong id="cartTotalPrice" style="color:var(--accent)"></strong>
         <br><br>
         <button class="btn btn-primary" data-lang="cart_checkout">Оформити замовлення</button>
     </div>

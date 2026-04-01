@@ -1,11 +1,12 @@
 # =======================
-# app.py — Flask сервер
+# app.py
 # =======================
 
 from flask import Flask, render_template, jsonify, request
-from database import get_all_cars, get_car_by_id, search_cars
+from database import get_all_cars, get_car_by_id, init_db
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 МБ ліміт фото
 
 # ---- Сторінки ----
 
@@ -42,12 +43,11 @@ def favorites():
     return render_template("favorites.html")
 
 
-# ---- API (JSON для фронтенду) ----
+# ---- API ----
 
 @app.route("/api/cars")
 def api_cars():
-    """Повертає всі авто або результати пошуку/фільтрів"""
-    query      = request.args.get("search", "").strip()
+    search     = request.args.get("search", "").strip()
     brand      = request.args.get("brand", "").strip()
     year_from  = request.args.get("year_from", type=int)
     year_to    = request.args.get("year_to", type=int)
@@ -55,21 +55,17 @@ def api_cars():
     price_to   = request.args.get("price_to", type=int)
     fuel       = request.args.get("fuel", "").strip()
 
-    cars = get_all_cars(
-        search=query,
-        brand=brand,
-        year_from=year_from,
-        year_to=year_to,
-        price_from=price_from,
-        price_to=price_to,
+    result = get_all_cars(
+        search=search, brand=brand,
+        year_from=year_from, year_to=year_to,
+        price_from=price_from, price_to=price_to,
         fuel=fuel
     )
-    return jsonify(cars)
+    return jsonify(result)
 
 
-@app.route("/api/cars/<car_id>")
+@app.route("/api/cars/<int:car_id>")
 def api_car(car_id):
-    """Повертає одне авто за ID"""
     car = get_car_by_id(car_id)
     if car:
         return jsonify(car)

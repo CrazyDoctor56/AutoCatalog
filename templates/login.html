@@ -13,27 +13,23 @@
     <div class="nav-links">
         <a href="/" data-lang="nav_home">Головна</a>
         <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
 
 <div class="form-container">
     <h2 data-lang="login_title">Вхід</h2>
-
     <div class="form-group">
         <label data-lang="login_email">Email</label>
         <input type="email" id="loginEmail" placeholder="your@email.com">
     </div>
-
     <div class="form-group">
         <label data-lang="login_password">Пароль</label>
         <input type="password" id="loginPassword" placeholder="••••••••">
     </div>
-
     <button class="btn btn-primary" style="width:100%" onclick="login()" data-lang="login_btn">Увійти</button>
-
     <div class="form-switch">
         <span data-lang="login_no_account">Немає акаунту?</span>
         <a href="/register" data-lang="login_register">Зареєструватись</a>

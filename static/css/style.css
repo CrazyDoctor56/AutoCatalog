@@ -565,3 +565,27 @@ footer {
         flex-direction: column;
     }
 }
+
+
+
+.lang-btn {
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    padding: 2px 4px;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+    transition: var(--transition);
+    opacity: 0.5;
+}
+
+.lang-btn:hover {
+    opacity: 0.85;
+    border-color: rgba(255,255,255,0.2);
+}
+
+.lang-btn.active {
+    opacity: 1;
+    border-color: var(--accent);
+}

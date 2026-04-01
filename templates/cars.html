@@ -15,10 +15,10 @@
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/cart" data-lang="nav_cart">Кошик</a>
         <a href="/login" data-lang="nav_login">Увійти</a>
-        <select class="lang-select" onchange="changeLang(this.value)">
-            <option value="ua">UA 🇺🇦</option>
-            <option value="en">EN 🇬🇧</option>
-        </select>
+        <div class="lang-switcher">
+            <button class="lang-btn" data-lang-btn="ua" onclick="changeLang('ua')" title="Українська">🇺🇦</button>
+            <button class="lang-btn" data-lang-btn="en" onclick="changeLang('en')" title="English">🇬🇧</button>
+        </div>
     </div>
 </nav>
 
@@ -34,11 +34,11 @@
 
     <div id="filters" class="filters">
         <div class="filters-content">
-            <input type="text" id="filterBrand" data-lang-placeholder="filter_brand" placeholder="Марка">
-            <input type="text" id="filterYearFrom" data-lang-placeholder="filter_year_from" placeholder="Рік від">
-            <input type="text" id="filterYearTo" data-lang-placeholder="filter_year_to" placeholder="Рік до">
-            <input type="text" id="filterPriceFrom" data-lang-placeholder="filter_price_from" placeholder="Ціна від ($)">
-            <input type="text" id="filterPriceTo" data-lang-placeholder="filter_price_to" placeholder="Ціна до ($)">
+            <input type="text" id="filterBrand" placeholder="Марка" data-lang-placeholder="filter_brand">
+            <input type="text" id="filterYearFrom" placeholder="Рік від" data-lang-placeholder="filter_year_from">
+            <input type="text" id="filterYearTo" placeholder="Рік до" data-lang-placeholder="filter_year_to">
+            <input type="text" id="filterPriceFrom" placeholder="Ціна від ($)" data-lang-placeholder="filter_price_from">
+            <input type="text" id="filterPriceTo" placeholder="Ціна до ($)" data-lang-placeholder="filter_price_to">
             <select id="filterFuel">
                 <option value="" data-lang="filter_fuel_all">Паливо</option>
                 <option value="бензин" data-lang="filter_fuel_petrol">Бензин</option>
@@ -49,42 +49,9 @@
         </div>
     </div>
 
-    <!-- Картки авто — будуть рендеритись через JS (або Flask) -->
+    <!-- Сюди JS рендерить картки -->
     <div class="cars-grid" id="carsGrid">
-
-        <a href="car?car=bmw_3_series_1986">
-            <div class="car-card">
-                <img src="/static/pic/bmw_3-series_1986_1.webp" alt="BMW 3 Series">
-                <div class="car-card-info">
-                    <h3>BMW 3 Series</h3>
-                    <p>1986 • бензин</p>
-                    <p class="price">$2 200</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="car?car=bmw_7_series_1999">
-            <div class="car-card">
-                <img src="/static/pic/bmw_7-series_1999_1.webp" alt="BMW 7 Series">
-                <div class="car-card-info">
-                    <h3>BMW 7 Series</h3>
-                    <p>1999 • бензин</p>
-                    <p class="price">$2 800</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="car?car=skoda_enyaq_iv_2025">
-            <div class="car-card">
-                <img src="/static/pic/skoda-enyaq-iv_2025_1.webp" alt="Skoda Enyaq IV">
-                <div class="car-card-info">
-                    <h3>Skoda Enyaq IV</h3>
-                    <p>2025 • електро</p>
-                    <p class="price">$42 437</p>
-                </div>
-            </div>
-        </a>
-
+        <p style="color:#aaa" id="loadingText">Завантаження...</p>
     </div>
 </div>
 
