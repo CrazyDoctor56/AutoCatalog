@@ -589,3 +589,72 @@ footer {
     opacity: 1;
     border-color: var(--accent);
 }
+
+/* ===========================
+   БЕЙДЖІ (в кошику / в обраному)
+   =========================== */
+.car-card-badges {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-fav  { background: rgba(255, 80, 80, 0.15); color: #ff6b6b; border: 1px solid rgba(255,80,80,0.3); }
+.badge-cart { background: rgba(0, 255, 153, 0.1);  color: var(--accent); border: 1px solid rgba(0,255,153,0.3); }
+
+/* ===========================
+   КНОПКА ВИДАЛЕННЯ З ОБРАНОГО
+   =========================== */
+.remove-fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: #ff6b6b;
+    border: 1px solid rgba(255,80,80,0.4);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.remove-fav-btn:hover {
+    background: rgba(255,80,80,0.3);
+}
+
+/* ===========================
+   ВІДСТУП ПІД КАРТКАМИ
+   =========================== */
+.cars-grid {
+    margin-bottom: 40px;
+}
+
+.car-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card-badges {
+    margin-top: auto;
+    padding-top: 8px;
+}

@@ -1,3 +1,4 @@
+// ---- ГАЛЕРЕЯ ----
 let currentSlide = 0;
 let totalSlides  = 0;
 
@@ -13,8 +14,8 @@ function buildGallery(images) {
         const src = `/static/pic/${img.filename}`;
 
         const slide = document.createElement("img");
-        slide.src   = src;
-        slide.alt   = `Фото ${i + 1}`;
+        slide.src = src;
+        slide.alt = `Фото ${i + 1}`;
         track.appendChild(slide);
 
         const dot = document.createElement("button");
@@ -40,7 +41,6 @@ function goToSlide(index) {
     currentSlide = (index + totalSlides) % totalSlides;
     const track = document.getElementById("galleryTrack");
     if (track) track.style.transform = `translateX(-${currentSlide * 100}%)`;
-
     document.querySelectorAll(".gallery-dot").forEach((d, i) =>
         d.classList.toggle("active", i === currentSlide));
     document.querySelectorAll(".gallery-thumbs img").forEach((t, i) =>
@@ -50,7 +50,7 @@ function goToSlide(index) {
 function galleryMove(dir) { goToSlide(currentSlide + dir); }
 
 document.addEventListener("touchstart", e => { window._touchX = e.touches[0].clientX; });
-document.addEventListener("touchend",   e => {
+document.addEventListener("touchend", e => {
     const diff = (window._touchX || 0) - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) galleryMove(diff > 0 ? 1 : -1);
 });
@@ -59,6 +59,7 @@ document.addEventListener("keydown", e => {
     if (e.key === "ArrowRight") galleryMove(1);
 });
 
+// ---- ЗАВАНТАЖЕННЯ АВТО ----
 const urlParams = new URLSearchParams(window.location.search);
 const carId     = urlParams.get("id");
 
@@ -70,7 +71,7 @@ async function loadCar() {
 
     try {
         const res = await fetch(`/api/cars/${carId}`);
-        if (!res.ok) throw new Error("Not found");
+        if (!res.ok) throw new Error();
         const car = await res.json();
 
         document.title = `AutoCatalog — ${car.title}`;
@@ -104,7 +105,6 @@ async function loadCar() {
         }
 
     } catch (e) {
-        console.error(e);
         document.getElementById("carName").textContent = "Авто не знайдено";
     }
 }

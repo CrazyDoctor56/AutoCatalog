@@ -1,7 +1,3 @@
-// =======================
-// script.js
-// =======================
-
 // ---- РЕНДЕР КАРТОК З API ----
 async function loadCars(params = {}) {
     const grid = document.getElementById("carsGrid");
@@ -16,6 +12,18 @@ async function loadCars(params = {}) {
         const res  = await fetch(url);
         const cars = await res.json();
 
+        // Отримуємо обране і кошик юзера якщо залогінений
+        let favIds  = [];
+        let cartIds = [];
+        try {
+            const [favRes, cartRes] = await Promise.all([
+                fetch("/api/favorites"),
+                fetch("/api/cart")
+            ]);
+            if (favRes.ok)  favIds  = (await favRes.json()).map(c => c.id);
+            if (cartRes.ok) cartIds = (await cartRes.json()).map(c => c.id);
+        } catch {}
+
         grid.innerHTML = "";
 
         if (cars.length === 0) {
@@ -24,19 +32,23 @@ async function loadCars(params = {}) {
         }
 
         cars.forEach(car => {
-            const img = car.main_image
-                ? `/static/pic/${car.main_image}`
-                : "/static/pic/no-image.webp";
+            const img    = car.main_image ? `/static/pic/${car.main_image}` : "";
+            const isFav  = favIds.includes(car.id);
+            const inCart = cartIds.includes(car.id);
 
             const card = document.createElement("a");
             card.href  = `/car?id=${car.id}`;
             card.innerHTML = `
                 <div class="car-card">
-                    <img src="${img}" alt="${car.title}" onerror="this.style.display='none'">
+                    ${img ? `<img src="${img}" alt="${car.title}" onerror="this.style.display='none'">` : ""}
                     <div class="car-card-info">
                         <h3>${car.title}</h3>
                         <p>${car.year} • ${car.fuel || ""} • ${car.city || ""}</p>
                         <p class="price">$${car.price.toLocaleString()}</p>
+                        <div class="car-card-badges">
+                            ${isFav  ? `<span class="badge badge-fav">❤️ Обране</span>` : ""}
+                            ${inCart ? `<span class="badge badge-cart">🛒 В кошику</span>` : ""}
+                        </div>
                     </div>
                 </div>
             `;
@@ -44,43 +56,33 @@ async function loadCars(params = {}) {
         });
 
     } catch (e) {
-        console.error("Помилка завантаження авто:", e);
+        console.error(e);
         grid.innerHTML = `<p style="color:#aaa">Помилка завантаження</p>`;
     }
 }
 
 // ---- ПОШУК ----
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-        searchInput.addEventListener("keypress", e => {
-            if (e.key === "Enter") applyFilters();
-        });
-    }
+function goSearch() {
+    const input = document.getElementById("searchInput");
+    if (!input) return;
+    const value = input.value.trim();
+    window.location.href = value ? `/cars?search=${encodeURIComponent(value)}` : "/cars";
+}
 
-    // Запускаємо завантаження тільки один раз
-    if (document.getElementById("carsGrid")) {
-        loadCars();
-    }
-});
-
-// ---- ФІЛЬТРИ (анімація) ----
 function toggleFilters() {
     const f = document.getElementById("filters");
     if (f) f.classList.toggle("active");
 }
 
-// ---- ФІЛЬТРИ (логіка) ----
 function applyFilters() {
-    const params = {};
-
-    const search = document.getElementById("searchInput")?.value.trim();
-    const brand  = document.getElementById("filterBrand")?.value.trim();
-    const yFrom  = document.getElementById("filterYearFrom")?.value.trim();
-    const yTo    = document.getElementById("filterYearTo")?.value.trim();
-    const pFrom  = document.getElementById("filterPriceFrom")?.value.trim();
-    const pTo    = document.getElementById("filterPriceTo")?.value.trim();
-    const fuel   = document.getElementById("filterFuel")?.value;
+    const params  = {};
+    const search  = document.getElementById("searchInput")?.value.trim();
+    const brand   = document.getElementById("filterBrand")?.value.trim();
+    const yFrom   = document.getElementById("filterYearFrom")?.value.trim();
+    const yTo     = document.getElementById("filterYearTo")?.value.trim();
+    const pFrom   = document.getElementById("filterPriceFrom")?.value.trim();
+    const pTo     = document.getElementById("filterPriceTo")?.value.trim();
+    const fuel    = document.getElementById("filterFuel")?.value;
 
     if (search) params.search     = search;
     if (brand)  params.brand      = brand;
@@ -94,27 +96,19 @@ function applyFilters() {
 }
 
 // ---- ОБРАНЕ ----
-function addToFavorites(carId) {
-    let fav = JSON.parse(localStorage.getItem("favorites")) || [];
-    if (!fav.includes(String(carId))) {
-        fav.push(String(carId));
-        localStorage.setItem("favorites", JSON.stringify(fav));
-        showToast("Додано в обране ❤️");
-    } else {
-        showToast("Вже в обраному");
-    }
+async function addToFavorites(carId) {
+    const res = await fetch(`/api/favorites/${carId}`, { method: "POST" });
+    if (res.ok) showToast("Додано в обране ❤️");
+    else if (res.status === 401) showToast("Увійдіть щоб додати в обране");
+    else showToast("Вже в обраному");
 }
 
 // ---- КОШИК ----
-function addToCart(carId) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (!cart.includes(String(carId))) {
-        cart.push(String(carId));
-        localStorage.setItem("cart", JSON.stringify(cart));
-        showToast("Додано в кошик 🛒");
-    } else {
-        showToast("Вже в кошику");
-    }
+async function addToCart(carId) {
+    const res = await fetch(`/api/cart/${carId}`, { method: "POST" });
+    if (res.ok) showToast("Додано в кошик 🛒");
+    else if (res.status === 401) showToast("Увійдіть щоб додати в кошик");
+    else showToast("Вже в кошику");
 }
 
 // ---- TOAST ----
@@ -138,3 +132,27 @@ function showToast(message) {
     toast.style.opacity = "1";
     setTimeout(() => { toast.style.opacity = "0"; }, 2500);
 }
+
+// ---- ІНІЦІАЛІЗАЦІЯ ----
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.addEventListener("keypress", e => {
+            if (e.key === "Enter") {
+                if (document.getElementById("carsGrid")) applyFilters();
+                else goSearch();
+            }
+        });
+    }
+
+    if (document.getElementById("carsGrid")) {
+        const params = new URLSearchParams(window.location.search);
+        const search = params.get("search");
+        if (search) {
+            if (searchInput) searchInput.value = search;
+            loadCars({ search });
+        } else {
+            loadCars();
+        }
+    }
+});

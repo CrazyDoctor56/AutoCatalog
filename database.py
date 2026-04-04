@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = "cars.db"
 
@@ -10,6 +11,17 @@ def get_connection():
 def init_db():
     conn = get_connection()
     c = conn.cursor()
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            name          TEXT NOT NULL,
+            email         TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     c.execute("""
         CREATE TABLE IF NOT EXISTS cars (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +39,7 @@ def init_db():
             status       TEXT DEFAULT 'active'
         )
     """)
+
     c.execute("""
         CREATE TABLE IF NOT EXISTS car_images (
             id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,10 +49,68 @@ def init_db():
             FOREIGN KEY (car_id) REFERENCES cars(id)
         )
     """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS favorites (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            car_id  INTEGER NOT NULL,
+            UNIQUE(user_id, car_id)
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS cart (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            car_id  INTEGER NOT NULL,
+            UNIQUE(user_id, car_id)
+        )
+    """)
+
     conn.commit()
     conn.close()
 
-# ---- АПІ ----
+# ---- КОРИСТУВАЧІ ----
+
+def create_user(name, email, password):
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name, email, generate_password_hash(password))
+        )
+        conn.commit()
+        return True, "OK"
+    except sqlite3.IntegrityError:
+        return False, "Email вже зареєстровано"
+    finally:
+        conn.close()
+
+def get_user_by_email(email):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = c.fetchone()
+    conn.close()
+    return dict(user) if user else None
+
+def get_user_by_id(user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    user = c.fetchone()
+    conn.close()
+    return dict(user) if user else None
+
+def verify_user(email, password):
+    user = get_user_by_email(email)
+    if user and check_password_hash(user["password_hash"], password):
+        return user
+    return None
+
+# ---- АВТО ----
 
 def get_all_cars(search="", brand="", year_from=None, year_to=None,
                  price_from=None, price_to=None, fuel=""):
@@ -124,6 +195,76 @@ def delete_car(car_id):
     conn = get_connection()
     c = conn.cursor()
     c.execute("UPDATE cars SET status = 'deleted' WHERE id = ?", (car_id,))
+    conn.commit()
+    conn.close()
+
+# ---- ОБРАНЕ ----
+
+def get_favorites(user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT cars.*, car_images.filename as main_image
+        FROM favorites
+        JOIN cars ON favorites.car_id = cars.id
+        LEFT JOIN car_images ON cars.id = car_images.car_id AND car_images.is_main = 1
+        WHERE favorites.user_id = ? AND cars.status = 'active'
+    """, (user_id,))
+    rows = c.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def add_favorite(user_id, car_id):
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO favorites (user_id, car_id) VALUES (?, ?)", (user_id, car_id))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+def remove_favorite(user_id, car_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM favorites WHERE user_id = ? AND car_id = ?", (user_id, car_id))
+    conn.commit()
+    conn.close()
+
+# ---- КОШИК ----
+
+def get_cart(user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT cars.*, car_images.filename as main_image
+        FROM cart
+        JOIN cars ON cart.car_id = cars.id
+        LEFT JOIN car_images ON cars.id = car_images.car_id AND car_images.is_main = 1
+        WHERE cart.user_id = ? AND cars.status = 'active'
+    """, (user_id,))
+    rows = c.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def add_to_cart(user_id, car_id):
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO cart (user_id, car_id) VALUES (?, ?)", (user_id, car_id))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+def remove_from_cart(user_id, car_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM cart WHERE user_id = ? AND car_id = ?", (user_id, car_id))
     conn.commit()
     conn.close()
 

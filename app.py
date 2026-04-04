@@ -1,76 +1,174 @@
-# =======================
-# app.py
-# =======================
-
-from flask import Flask, render_template, jsonify, request
-from database import get_all_cars, get_car_by_id, init_db
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+import database as db
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 МБ ліміт фото
+app.secret_key = "autocatalog_secret_key_2026"
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
-# ---- Сторінки ----
+# ---- ХЕЛПЕР ----
+
+def current_user():
+    user_id = session.get("user_id")
+    if user_id:
+        return db.get_user_by_id(user_id)
+    return None
+
+# ---- СТОРІНКИ ----
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", user=current_user())
 
 @app.route("/cars")
 def cars():
-    return render_template("cars.html")
+    return render_template("cars.html", user=current_user())
 
 @app.route("/car")
 def car():
-    return render_template("car.html")
+    return render_template("car.html", user=current_user())
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html", user=current_user())
 
 @app.route("/login")
-def login():
+def login_page():
+    if current_user():
+        return redirect(url_for("index"))
     return render_template("login.html")
 
 @app.route("/register")
-def register():
+def register_page():
+    if current_user():
+        return redirect(url_for("index"))
     return render_template("register.html")
 
 @app.route("/cart")
 def cart():
-    return render_template("cart.html")
+    return render_template("cart.html", user=current_user())
 
 @app.route("/favorites")
 def favorites():
-    return render_template("favorites.html")
+    return render_template("favorites.html", user=current_user())
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
-# ---- API ----
+# ---- API АВТОРИЗАЦІЯ ----
+
+@app.route("/api/register", methods=["POST"])
+def api_register():
+    data     = request.get_json()
+    name     = data.get("name", "").strip()
+    email    = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    if not name or not email or not password:
+        return jsonify({"error": "Заповніть всі поля"}), 400
+    if len(password) < 6:
+        return jsonify({"error": "Пароль мінімум 6 символів"}), 400
+
+    ok, msg = db.create_user(name, email, password)
+    if not ok:
+        return jsonify({"error": msg}), 400
+
+    user = db.get_user_by_email(email)
+    session["user_id"] = user["id"]
+    return jsonify({"ok": True, "name": user["name"]})
+
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    data     = request.get_json()
+    email    = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    user = db.verify_user(email, password)
+    if not user:
+        return jsonify({"error": "Невірний email або пароль"}), 401
+
+    session["user_id"] = user["id"]
+    return jsonify({"ok": True, "name": user["name"]})
+
+@app.route("/api/me")
+def api_me():
+    user = current_user()
+    if user:
+        return jsonify({"id": user["id"], "name": user["name"], "email": user["email"]})
+    return jsonify({"error": "Не авторизований"}), 401
+
+# ---- API АВТО ----
 
 @app.route("/api/cars")
 def api_cars():
-    search     = request.args.get("search", "").strip()
-    brand      = request.args.get("brand", "").strip()
-    year_from  = request.args.get("year_from", type=int)
-    year_to    = request.args.get("year_to", type=int)
-    price_from = request.args.get("price_from", type=int)
-    price_to   = request.args.get("price_to", type=int)
-    fuel       = request.args.get("fuel", "").strip()
-
-    result = get_all_cars(
-        search=search, brand=brand,
-        year_from=year_from, year_to=year_to,
-        price_from=price_from, price_to=price_to,
-        fuel=fuel
+    result = db.get_all_cars(
+        search=request.args.get("search", "").strip(),
+        brand=request.args.get("brand", "").strip(),
+        year_from=request.args.get("year_from", type=int),
+        year_to=request.args.get("year_to", type=int),
+        price_from=request.args.get("price_from", type=int),
+        price_to=request.args.get("price_to", type=int),
+        fuel=request.args.get("fuel", "").strip()
     )
     return jsonify(result)
 
-
 @app.route("/api/cars/<int:car_id>")
 def api_car(car_id):
-    car = get_car_by_id(car_id)
+    car = db.get_car_by_id(car_id)
     if car:
         return jsonify(car)
     return jsonify({"error": "Авто не знайдено"}), 404
 
+# ---- API ОБРАНЕ ----
+
+@app.route("/api/favorites")
+def api_favorites():
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    return jsonify(db.get_favorites(user["id"]))
+
+@app.route("/api/favorites/<int:car_id>", methods=["POST"])
+def api_add_favorite(car_id):
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    db.add_favorite(user["id"], car_id)
+    return jsonify({"ok": True})
+
+@app.route("/api/favorites/<int:car_id>", methods=["DELETE"])
+def api_remove_favorite(car_id):
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    db.remove_favorite(user["id"], car_id)
+    return jsonify({"ok": True})
+
+# ---- API КОШИК ----
+
+@app.route("/api/cart")
+def api_cart():
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    return jsonify(db.get_cart(user["id"]))
+
+@app.route("/api/cart/<int:car_id>", methods=["POST"])
+def api_add_cart(car_id):
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    db.add_to_cart(user["id"], car_id)
+    return jsonify({"ok": True})
+
+@app.route("/api/cart/<int:car_id>", methods=["DELETE"])
+def api_remove_cart(car_id):
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    db.remove_from_cart(user["id"], car_id)
+    return jsonify({"ok": True})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

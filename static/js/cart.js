@@ -6,56 +6,54 @@ async function loadCartItems() {
     const cartTotalPrice = document.getElementById("cartTotalPrice");
     if (!cartList) return;
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const res = await fetch("/api/cart");
+
+    if (res.status === 401) {
+        cartList.innerHTML = `<p style="color:#aaa;margin-top:20px">Увійдіть щоб побачити кошик. <a href="/login" style="color:var(--accent)">Увійти</a></p>`;
+        return;
+    }
+
+    const cart = await res.json();
 
     if (cart.length === 0) {
-        cartList.innerHTML = `<p style="color:#aaa;margin-top:20px" data-lang="cart_empty">Кошик порожній</p>`;
+        cartList.innerHTML = `<p style="color:#aaa;margin-top:20px">Кошик порожній</p>`;
         return;
     }
 
     let total = 0;
     cartList.innerHTML = "";
 
-    for (const id of cart) {
-        try {
-            const res = await fetch(`/api/cars/${id}`);
-            if (!res.ok) continue;
-            const car = await res.json();
-            const img = car.images?.[0]?.filename
-                ? `/static/pic/${car.images[0].filename}`
-                : "/static/pic/no-image.webp";
+    cart.forEach(car => {
+        const img = car.main_image ? `/static/pic/${car.main_image}` : "";
+        total += car.price;
 
-            total += car.price;
+        const item = document.createElement("div");
+        item.className = "cart-item";
+        item.innerHTML = `
+            ${img ? `<img src="${img}" alt="${car.title}">` : ""}
+            <div class="cart-item-info">
+                <h3>${car.title}</h3>
+                <p class="price">$${car.price.toLocaleString()}</p>
+            </div>
+            <button class="btn btn-outline" onclick="removeFromCart(${car.id}, this)">✕</button>
+        `;
+        cartList.appendChild(item);
+    });
 
-            const item = document.createElement("div");
-            item.className = "cart-item";
-            item.innerHTML = `
-                <img src="${img}" alt="${car.title}">
-                <div class="cart-item-info">
-                    <h3>${car.title}</h3>
-                    <p class="price">$${car.price.toLocaleString()}</p>
-                </div>
-                <button class="btn btn-outline" onclick="removeFromCart('${id}', this)">✕</button>
-            `;
-            cartList.appendChild(item);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    if (cartTotal && total > 0) {
+    if (cartTotal) {
         cartTotal.style.display = "block";
         cartTotalPrice.textContent = `$${total.toLocaleString()}`;
     }
 }
 
-function removeFromCart(carId, btn) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart = cart.filter(id => id !== String(carId));
-    localStorage.setItem("cart", JSON.stringify(cart));
-    btn.closest(".cart-item").remove();
+async function removeFromCart(carId, btn) {
+    const res = await fetch(`/api/cart/${carId}`, { method: "DELETE" });
+    if (!res.ok) return;
+    const item = btn.closest(".cart-item");
+    if (item) item.remove();
 
-    if (cart.length === 0) {
+    const remaining = document.querySelectorAll(".cart-item");
+    if (remaining.length === 0) {
         const cartTotal = document.getElementById("cartTotal");
         if (cartTotal) cartTotal.style.display = "none";
         const cartList = document.getElementById("cartList");

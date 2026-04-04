@@ -46,21 +46,24 @@
     </style>
 </head>
 <body>
-
 <nav>
     <div class="nav-logo">🚗 AutoCatalog</div>
     <div class="nav-links">
         <a href="/cars" data-lang="nav_cars">Авто</a>
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/cart" data-lang="nav_cart">Кошик</a>
+        {% if user %}
+        <span style="color:var(--accent);font-weight:500">{{ user.name }}</span>
+        <a href="/logout" style="color:#aaa;font-size:13px">Вийти</a>
+        {% else %}
         <a href="/login" data-lang="nav_login">Увійти</a>
+        {% endif %}
         <select class="lang-select" onchange="changeLang(this.value)">
             <option value="ua">🇺🇦 UA</option>
             <option value="en">🇬🇧 EN</option>
         </select>
     </div>
 </nav>
-
 <div class="hero">
     <div class="hero-content">
         <h1 data-lang="hero_title">Найкращі автомобілі з Європи</h1>
@@ -71,7 +74,6 @@
         </div>
     </div>
 </div>
-
 <footer>
     <div class="footer-container">
         <div class="footer-info">
@@ -89,7 +91,6 @@
         </div>
     </div>
 </footer>
-
 <script src="/static/js/lang.js"></script>
 <script src="/static/js/script.js"></script>
 </body>
