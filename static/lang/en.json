@@ -42,5 +42,9 @@
   "about_p1": "AutoCatalog is an educational project. This site is NOT a real car buying/selling website. All prices may not match real ones.",
   "about_p2": "This project was created for practice and demonstration of web development skills. It has no commercial purpose.",
   "about_thanks": "Thank you for your attention!",
-  "footer_about": "About us"
+  "footer_about": "About us",
+  "register_phone": "Phone",
+  "register_phone_placeholder": "+XX XXX XXX XX XX",
+  "car_engine": "Engine (L)",
+  "seller": "Seller"
 }

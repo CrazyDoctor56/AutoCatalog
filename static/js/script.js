@@ -12,7 +12,6 @@ async function loadCars(params = {}) {
         const res  = await fetch(url);
         const cars = await res.json();
 
-        // Отримуємо обране і кошик юзера якщо залогінений
         let favIds  = [];
         let cartIds = [];
         try {

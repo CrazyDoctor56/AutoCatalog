@@ -14,8 +14,10 @@
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/cart" data-lang="nav_cart">Кошик</a>
         {% if user %}
+        <a href="/sell" style="color:var(--accent)" data-lang="+sell">+ Продати</a>
+        <a href="/my-cars" data-lang="my_cars">Мої авто</a>
         <span style="color:var(--accent);font-weight:500">{{ user.name }}</span>
-        <a href="/logout" style="color:#aaa;font-size:13px">Вийти</a>
+        <a href="/logout" style="color:#aaa;font-size:13px" data-lang="exit">Вийти</a>
         {% else %}
         <a href="/login" data-lang="nav_login">Увійти</a>
         {% endif %}
@@ -51,7 +53,7 @@
         </div>
     </div>
     <div class="cars-grid" id="carsGrid">
-        <p style="color:#aaa">Завантаження...</p>
+        <p style="color:#aaa" data-lang="download">Завантаження...</p>
     </div>
 </div>
 <footer>

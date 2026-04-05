@@ -3,45 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoCatalog</title>
+    <title>AutoCatalog — Мої оголошення</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        .hero {
-            height: 90vh;
+        .my-car-item {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            background: url("/static/pic/banner_audi_golovna.jpg") no-repeat center/cover;
-            position: relative;
+            gap: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 15px;
+            transition: var(--transition);
         }
-        .hero::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
+        .my-car-item:hover {
+            border-color: rgba(0,255,153,0.15);
         }
-        .hero-content {
-            position: relative;
-            z-index: 1;
+        .my-car-item img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
         }
-        .hero-content h1 {
+        .my-car-item-info {
+            flex: 1;
+        }
+        .my-car-item-info h3 {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 56px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
+            font-size: 20px;
+            margin-bottom: 4px;
         }
-        .hero-content p {
-            color: #ccc;
-            font-size: 18px;
-            margin-bottom: 25px;
+        .my-car-item-info p {
+            color: var(--text-muted);
+            font-size: 14px;
         }
-        .hero-search {
+        .my-car-actions {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -49,12 +50,10 @@
 <nav>
     <div class="nav-logo">🚗 AutoCatalog</div>
     <div class="nav-links">
+        <a href="/" data-lang="nav_home">Головна</a>
         <a href="/cars" data-lang="nav_cars">Авто</a>
-        <a href="/favorites" data-lang="nav_favorites">Обране</a>
-        <a href="/cart" data-lang="nav_cart">Кошик</a>
         {% if user %}
-        <a href="/sell" style="color:var(--accent)" data-lang="+sell">+ Продати</a>
-        <a href="/my-cars" data-lang="my_cars">Мої авто</a>
+        <a href="/sell" style="color:var(--accent)" data-lang="+sell">+ Продати авто</a>
         <span style="color:var(--accent);font-weight:500">{{ user.name }}</span>
         <a href="/logout" style="color:#aaa;font-size:13px" data-lang="exit">Вийти</a>
         {% else %}
@@ -66,14 +65,12 @@
         </select>
     </div>
 </nav>
-<div class="hero">
-    <div class="hero-content">
-        <h1 data-lang="hero_title">Найкращі автомобілі з Європи</h1>
-        <p data-lang="hero_subtitle">Знайди авто своєї мрії</p>
-        <div class="hero-search">
-            <input type="text" class="search-input" id="searchInput" placeholder="Пошук авто..." data-lang-placeholder="search_placeholder">
-            <button class="btn btn-primary" onclick="goSearch()" data-lang="search_btn">Знайти</button>
-        </div>
+<div class="container">
+    <div class="page-title">
+        <h1 data-lang="my_announcements">Мої оголошення</h1>
+    </div>
+    <div id="myCarsList">
+        <p style="color:#aaa" data-lang="download">Завантаження...</p>
     </div>
 </div>
 <footer>
@@ -88,12 +85,13 @@
             <a href="https://viber.com" target="_blank"><img src="/static/icons/viber.svg"></a>
         </div>
         <div class="footer-bottom">
-            <a href="/about" class="footer-link" data-lang="footer_about">Про нас</a>
+            <a href="/about" class="footer-link">Про нас</a>
             <p>© 2026 AutoCatalog</p>
         </div>
     </div>
 </footer>
 <script src="/static/js/lang.js"></script>
 <script src="/static/js/script.js"></script>
+<script src="/static/js/my_cars.js"></script>
 </body>
 </html>

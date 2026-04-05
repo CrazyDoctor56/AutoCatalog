@@ -11,17 +11,16 @@ def get_connection():
 def init_db():
     conn = get_connection()
     c = conn.cursor()
-
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id            INTEGER PRIMARY KEY AUTOINCREMENT,
             name          TEXT NOT NULL,
             email         TEXT NOT NULL UNIQUE,
+            phone         TEXT,
             password_hash TEXT NOT NULL,
             created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
-
     c.execute("""
         CREATE TABLE IF NOT EXISTS cars (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +38,6 @@ def init_db():
             status       TEXT DEFAULT 'active'
         )
     """)
-
     c.execute("""
         CREATE TABLE IF NOT EXISTS car_images (
             id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +47,6 @@ def init_db():
             FOREIGN KEY (car_id) REFERENCES cars(id)
         )
     """)
-
     c.execute("""
         CREATE TABLE IF NOT EXISTS favorites (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,7 +55,6 @@ def init_db():
             UNIQUE(user_id, car_id)
         )
     """)
-
     c.execute("""
         CREATE TABLE IF NOT EXISTS cart (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,19 +63,16 @@ def init_db():
             UNIQUE(user_id, car_id)
         )
     """)
-
     conn.commit()
     conn.close()
 
-# ---- КОРИСТУВАЧІ ----
-
-def create_user(name, email, password):
+def create_user(name, email, phone, password):
     conn = get_connection()
     c = conn.cursor()
     try:
         c.execute(
-            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
-            (name, email, generate_password_hash(password))
+            "INSERT INTO users (name, email, phone, password_hash) VALUES (?, ?, ?, ?)",
+            (name, email, phone, generate_password_hash(password))
         )
         conn.commit()
         return True, "OK"
@@ -109,8 +102,6 @@ def verify_user(email, password):
     if user and check_password_hash(user["password_hash"], password):
         return user
     return None
-
-# ---- АВТО ----
 
 def get_all_cars(search="", brand="", year_from=None, year_to=None,
                  price_from=None, price_to=None, fuel=""):
@@ -152,7 +143,12 @@ def get_all_cars(search="", brand="", year_from=None, year_to=None,
 def get_car_by_id(car_id):
     conn = get_connection()
     c = conn.cursor()
-    c.execute("SELECT * FROM cars WHERE id = ?", (car_id,))
+    c.execute("""
+        SELECT cars.*, users.name as seller_name, users.phone as seller_phone
+        FROM cars
+        LEFT JOIN users ON cars.user_id = users.id
+        WHERE cars.id = ?
+    """, (car_id,))
     car = c.fetchone()
     if not car:
         conn.close()
@@ -191,15 +187,6 @@ def add_car_image(car_id, filename, is_main=False):
     conn.close()
     return True, "OK"
 
-def delete_car(car_id):
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("UPDATE cars SET status = 'deleted' WHERE id = ?", (car_id,))
-    conn.commit()
-    conn.close()
-
-# ---- ОБРАНЕ ----
-
 def get_favorites(user_id):
     conn = get_connection()
     c = conn.cursor()
@@ -233,8 +220,6 @@ def remove_favorite(user_id, car_id):
     conn.commit()
     conn.close()
 
-# ---- КОШИК ----
-
 def get_cart(user_id):
     conn = get_connection()
     c = conn.cursor()
@@ -265,6 +250,27 @@ def remove_from_cart(user_id, car_id):
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM cart WHERE user_id = ? AND car_id = ?", (user_id, car_id))
+    conn.commit()
+    conn.close()
+
+def get_user_cars(user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT cars.*, car_images.filename as main_image
+        FROM cars
+        LEFT JOIN car_images ON cars.id = car_images.car_id AND car_images.is_main = 1
+        WHERE cars.user_id = ? AND cars.status = 'active'
+        ORDER BY cars.id DESC
+    """, (user_id,))
+    rows = c.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def delete_user_car(car_id, user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("UPDATE cars SET status = 'deleted' WHERE id = ? AND user_id = ?", (car_id, user_id))
     conn.commit()
     conn.close()
 

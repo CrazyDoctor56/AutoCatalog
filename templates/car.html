@@ -6,85 +6,125 @@
     <title>AutoCatalog — Авто</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        .gallery {
-            position: relative;
-            border-radius: var(--radius);
-            overflow: hidden;
-            background: #000;
-            width: 100%;
-            max-height: 420px;
-            aspect-ratio: 16/9;
+        .gallery { 
+            position: relative; 
+            border-radius: var(--radius); 
+            overflow: hidden; 
+            background: #000; 
+            width: 100%; 
+            max-height: 420px; 
+            aspect-ratio: 16/9; 
         }
-        .gallery-track {
+        .gallery-track { 
+            display: flex; 
+            transition: transform 0.4s ease; 
+            height: 100%; 
+        }
+        .gallery-track img { 
+            min-width: 100%; 
+            height: 100%; 
+            max-height: 420px; 
+            object-fit: cover; 
+            flex-shrink: 0; 
+        }
+        .gallery-btn { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: rgba(0,0,0,0.55); 
+            color: white; 
+            border: none; 
+            width: 42px; 
+            height: 42px; border-radius: 50%; 
+            font-size: 20px; 
+            cursor: pointer; 
+            z-index: 2; 
+            transition: background 0.2s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .gallery-btn:hover { 
+            background: #00ff99b3; 
+            color: #000; 
+        }
+        .gallery-btn.prev { 
+            left: 12px; 
+        }
+        .gallery-btn.next { 
+            right: 12px; 
+        }
+        .gallery-dots { 
+            position: absolute; 
+            bottom: 12px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            gap: 7px; 
+            z-index: 2; 
+        }
+        .gallery-dot { 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.45); 
+            cursor: pointer; 
+            transition: background 0.2s; 
+            border: none; 
+        }
+        .gallery-dot.active { 
+            background: var(--accent); 
+        }
+        .gallery-thumbs { 
             display: flex;
-            transition: transform 0.4s ease;
-            height: 100%;
+            gap: 8px; 
+            margin-top: 10px; 
+            overflow-x: auto; 
+            padding-bottom: 4px; 
         }
-        .gallery-track img {
-            min-width: 100%;
-            height: 100%;
-            max-height: 420px;
-            object-fit: cover;
-            flex-shrink: 0;
+        .gallery-thumbs img { 
+            width: 80px; 
+            height: 55px; 
+            object-fit: cover; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            opacity: 0.55; 
+            transition: opacity 0.2s, outline 0.2s; 
+            flex-shrink: 0; 
         }
-        .gallery-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.55);
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 2;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .gallery-thumbs img.active { 
+            opacity: 1; 
+            outline: 2px solid var(--accent); 
         }
-        .gallery-btn:hover { background: rgba(0,255,153,0.7); color: #000; }
-        .gallery-btn.prev { left: 12px; }
-        .gallery-btn.next { right: 12px; }
-        .gallery-dots {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 7px;
-            z-index: 2;
+        .seller-block { 
+            background: var(--bg-card); 
+            border: 1px solid rgba(0,255,153,0.15); 
+            border-radius: var(--radius); 
+            padding: 16px 20px; 
+            margin-top: 20px; 
         }
-        .gallery-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.45);
-            cursor: pointer;
-            transition: background 0.2s;
-            border: none;
+        .seller-label { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 6px; 
         }
-        .gallery-dot.active { background: var(--accent); }
-        .gallery-thumbs {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            overflow-x: auto;
-            padding-bottom: 4px;
+        .seller-name { 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 20px; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
         }
-        .gallery-thumbs img {
-            width: 80px;
-            height: 55px;
-            object-fit: cover;
-            border-radius: 6px;
-            cursor: pointer;
-            opacity: 0.55;
-            transition: opacity 0.2s, outline 0.2s;
-            flex-shrink: 0;
+        .seller-phone { 
+            display: inline-block; 
+            color: var(--accent); 
+            font-size: 18px; 
+            font-weight: 600; 
         }
-        .gallery-thumbs img.active { opacity: 1; outline: 2px solid var(--accent); }
+        .seller-phone:hover { 
+            text-decoration: underline; 
+        }
     </style>
 </head>
 <body>
@@ -96,8 +136,10 @@
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/cart" data-lang="nav_cart">Кошик</a>
         {% if user %}
+        <a href="/sell" style="color:var(--accent)" data-lang="+sell">+ Продати</a>
+        <a href="/my-cars" data-lang="my_cars">Мої авто</a>
         <span style="color:var(--accent);font-weight:500">{{ user.name }}</span>
-        <a href="/logout" style="color:#aaa;font-size:13px">Вийти</a>
+        <a href="/logout" style="color:#aaa;font-size:13px" data-lang="exit">Вийти</a>
         {% else %}
         <a href="/login" data-lang="nav_login">Увійти</a>
         {% endif %}
@@ -126,6 +168,7 @@
                 <button class="btn btn-primary" id="btnCart" data-lang="btn_cart">Додати в кошик</button>
                 <button class="btn btn-outline" id="btnFav" data-lang="btn_fav">В обране</button>
             </div>
+            <div id="sellerInfo"></div>
         </div>
     </div>
 </div>

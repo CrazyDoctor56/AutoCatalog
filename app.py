@@ -1,19 +1,18 @@
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+from datetime import timedelta
 import database as db
+import utils
 
 app = Flask(__name__)
 app.secret_key = "autocatalog_secret_key_2026"
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
-
-# ---- ХЕЛПЕР ----
+app.permanent_session_lifetime = timedelta(days=30)
 
 def current_user():
     user_id = session.get("user_id")
     if user_id:
         return db.get_user_by_id(user_id)
     return None
-
-# ---- СТОРІНКИ ----
 
 @app.route("/")
 def index():
@@ -51,31 +50,40 @@ def cart():
 def favorites():
     return render_template("favorites.html", user=current_user())
 
+@app.route("/sell")
+def sell():
+    if not current_user():
+        return redirect(url_for("login_page"))
+    return render_template("sell.html", user=current_user())
+
+@app.route("/my-cars")
+def my_cars():
+    if not current_user():
+        return redirect(url_for("login_page"))
+    return render_template("my_cars.html", user=current_user())
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("index"))
-
-# ---- API АВТОРИЗАЦІЯ ----
 
 @app.route("/api/register", methods=["POST"])
 def api_register():
     data     = request.get_json()
     name     = data.get("name", "").strip()
     email    = data.get("email", "").strip()
+    phone    = data.get("phone", "").strip()
     password = data.get("password", "")
-
     if not name or not email or not password:
         return jsonify({"error": "Заповніть всі поля"}), 400
     if len(password) < 6:
         return jsonify({"error": "Пароль мінімум 6 символів"}), 400
-
-    ok, msg = db.create_user(name, email, password)
+    ok, msg = db.create_user(name, email, phone, password)
     if not ok:
         return jsonify({"error": msg}), 400
-
     user = db.get_user_by_email(email)
     session["user_id"] = user["id"]
+    session.permanent = True
     return jsonify({"ok": True, "name": user["name"]})
 
 @app.route("/api/login", methods=["POST"])
@@ -83,12 +91,11 @@ def api_login():
     data     = request.get_json()
     email    = data.get("email", "").strip()
     password = data.get("password", "")
-
     user = db.verify_user(email, password)
     if not user:
         return jsonify({"error": "Невірний email або пароль"}), 401
-
     session["user_id"] = user["id"]
+    session.permanent = True
     return jsonify({"ok": True, "name": user["name"]})
 
 @app.route("/api/me")
@@ -97,8 +104,6 @@ def api_me():
     if user:
         return jsonify({"id": user["id"], "name": user["name"], "email": user["email"]})
     return jsonify({"error": "Не авторизований"}), 401
-
-# ---- API АВТО ----
 
 @app.route("/api/cars")
 def api_cars():
@@ -120,7 +125,52 @@ def api_car(car_id):
         return jsonify(car)
     return jsonify({"error": "Авто не знайдено"}), 404
 
-# ---- API ОБРАНЕ ----
+@app.route("/api/sell", methods=["POST"])
+def api_sell():
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    title        = request.form.get("title", "").strip()
+    price        = request.form.get("price")
+    year         = request.form.get("year")
+    mileage      = request.form.get("mileage") or None
+    engine       = request.form.get("engine") or None
+    fuel         = request.form.get("fuel", "бензин")
+    transmission = request.form.get("transmission", "механіка")
+    color        = request.form.get("color", "").strip()
+    city         = request.form.get("city", "").strip()
+    description  = request.form.get("description", "").strip()
+    if not title or not price or not year:
+        return jsonify({"error": "Заповніть обов'язкові поля"}), 400
+    car_id = db.add_car(
+        title=title, price=int(price), year=int(year),
+        mileage=int(mileage) if mileage else None,
+        fuel=fuel, engine=float(engine) if engine else None,
+        transmission=transmission, color=color,
+        city=city, description=description,
+        user_id=user["id"]
+    )
+    photos = request.files.getlist("photos")
+    for i, photo in enumerate(photos[:25]):
+        if photo and utils.allowed_file(photo.filename):
+            filename = utils.save_photo(photo)
+            db.add_car_image(car_id, filename, is_main=(i == 0))
+    return jsonify({"ok": True, "car_id": car_id})
+
+@app.route("/api/my-cars")
+def api_my_cars():
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    return jsonify(db.get_user_cars(user["id"]))
+
+@app.route("/api/my-cars/<int:car_id>", methods=["DELETE"])
+def api_delete_car(car_id):
+    user = current_user()
+    if not user:
+        return jsonify({"error": "Не авторизований"}), 401
+    db.delete_user_car(car_id, user["id"])
+    return jsonify({"ok": True})
 
 @app.route("/api/favorites")
 def api_favorites():
@@ -144,8 +194,6 @@ def api_remove_favorite(car_id):
         return jsonify({"error": "Не авторизований"}), 401
     db.remove_favorite(user["id"], car_id)
     return jsonify({"ok": True})
-
-# ---- API КОШИК ----
 
 @app.route("/api/cart")
 def api_cart():

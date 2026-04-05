@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCatalog — Продати авто</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .sell-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .sell-container h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .photo-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 18px;
+        }
+        .photo-upload:hover {
+            border-color: var(--accent);
+        }
+        .photo-upload p {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .photo-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .photo-preview-item {
+            position: relative;
+            width: 100px;
+            height: 70px;
+        }
+        .photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .photo-preview-item button {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-count {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav-logo">🚗 AutoCatalog</div>
+    <div class="nav-links">
+        <a href="/" data-lang="nav_home">Головна</a>
+        <a href="/cars" data-lang="nav_cars">Авто</a>
+        {% if user %}
+        <a href="/my-cars" data-lang="my_announcements">Мої оголошення</a>
+        <span style="color:var(--accent);font-weight:500">{{ user.name }}</span>
+        <a href="/logout" style="color:#aaa;font-size:13px" data-lang="exit">Вийти</a>
+        {% else %}
+        <a href="/login" data-lang="nav_login">Увійти</a>
+        {% endif %}
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="ua">🇺🇦 UA</option>
+            <option value="en">🇬🇧 EN</option>
+        </select>
+    </div>
+</nav>
+<div class="sell-container">
+    <h1 data-lang="sell_car">Продати авто</h1>
+
+    <div class="form-group">
+        <label data-lang="car_name">Назва авто *</label>
+        <input type="text" id="title" data-lang-placeholder="car_name_placeholder" placeholder="Наприклад: BMW 3 Series">
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label data-lang="car_price">Ціна ($) *</label>
+            <input type="number" id="price" placeholder="5000">
+        </div>
+        <div class="form-group">
+            <label data-lang="car_year">Рік *</label>
+            <input type="number" id="year" placeholder="2015">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label data-lang="car_mileage">Пробіг (км)</label>
+            <input type="number" id="mileage" placeholder="100000">
+        </div>
+        <div class="form-group">
+            <label data-lang="car_engine">Двигун (л)</label>
+            <input type="number" id="engine" placeholder="2.0" step="0.1">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label data-lang="car_fuel">Паливо</label>
+            <select id="fuel" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#222;color:white;font-size:15px;outline:none">
+                <option value="бензин" data-lang="car_fuel_petrol">Бензин</option>
+                <option value="дизель" data-lang="car_fuel_diesel">Дизель</option>
+                <option value="електро" data-lang="car_fuel_electric">Електро</option>
+                <option value="гібрид" data-lang="car_fuel_hybrid">Гібрид</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label data-lang="car_transmission">КПП</label>
+            <select id="transmission" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#222;color:white;font-size:15px;outline:none">
+                <option value="механіка" data-lang="car_transmission_manual">Механіка</option>
+                <option value="автомат" data-lang="car_transmission_automatic">Автомат</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label data-lang="car_color">Колір</label>
+            <input type="text" id="color" placeholder="Чорний" data-lang-placeholder="car_color_placeholder">
+        </div>
+        <div class="form-group">
+            <label data-lang="car_city">Місто</label>
+            <input type="text" id="city" placeholder="Київ" data-lang-placeholder="car_city_placeholder">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label data-lang="car_description">Опис</label>
+        <textarea id="description" rows="4" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:#222;color:white;font-size:15px;font-family:'Inter',sans-serif;outline:none;resize:vertical;transition:var(--transition)" data-lang-placeholder="car_description_placeholder" placeholder="Розкажіть про авто..."></textarea>
+    </div>
+
+    <label data-lang="car_photos">Фото (до 25 штук)</label>
+    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+        <div style="font-size:36px">📷</div>
+        <p data-lang="press_to_upload">Натисніть щоб вибрати фото<br>JPG, PNG, WEBP — до 10 МБ кожне</p>
+    </div>
+    <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="handlePhotos(this)">
+    <div class="photo-count" id="photoCount"></div>
+    <div class="photo-preview" id="photoPreview"></div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="submitCar()" data-lang="submit_btn">Опублікувати оголошення</button>
+</div>
+<footer>
+    <div class="footer-container">
+        <div class="footer-info">
+            <p>+380 77 100 88 66</p>
+            <p>autocatalog@gmail.com</p>
+        </div>
+        <div class="footer-socials">
+            <a href="https://t.me" target="_blank"><img src="/static/icons/telegram.svg"></a>
+            <a href="https://instagram.com" target="_blank"><img src="/static/icons/instagram.svg"></a>
+            <a href="https://viber.com" target="_blank"><img src="/static/icons/viber.svg"></a>
+        </div>
+        <div class="footer-bottom">
+            <a href="/about" class="footer-link">Про нас</a>
+            <p>© 2026 AutoCatalog</p>
+        </div>
+    </div>
+</footer>
+<script src="/static/js/lang.js"></script>
+<script src="/static/js/script.js"></script>
+<script src="/static/js/sell.js"></script>
+</body>
+</html>
