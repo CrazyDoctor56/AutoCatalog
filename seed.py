@@ -1,8 +1,3 @@
-# =======================
-# seed.py — заповнення бази даних
-# Запуск: python seed.py
-# =======================
-
 import sqlite3
 import os
 
@@ -180,7 +175,6 @@ cars_data = [
     },
 ]
 
-
 def seed():
     if not os.path.exists(DB_PATH):
         print("cars.db не знайдено. Спочатку запусти app.py.")
@@ -219,7 +213,6 @@ def seed():
     conn.commit()
     conn.close()
     print(f"\nГотово! Додано: {added}, пропущено: {skipped}")
-
 
 if __name__ == "__main__":
     seed()

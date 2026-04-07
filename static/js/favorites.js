@@ -1,5 +1,3 @@
-// ---- ОБРАНЕ ----
-
 async function loadFavorites() {
     const list = document.getElementById("favoritesList");
     if (!list) return;

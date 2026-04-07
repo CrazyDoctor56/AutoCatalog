@@ -49,7 +49,10 @@
 <body>
 <nav>
     <div class="nav-logo">🚗 AutoCatalog</div>
-    <div class="nav-links">
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
         <a href="/" data-lang="nav_home">Головна</a>
         <a href="/cars" data-lang="nav_cars">Авто</a>
         {% if user %}
@@ -93,5 +96,11 @@
 <script src="/static/js/lang.js"></script>
 <script src="/static/js/script.js"></script>
 <script src="/static/js/my_cars.js"></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("open");
+    document.getElementById("burgerBtn").classList.toggle("open");
+}
+</script>
 </body>
 </html>

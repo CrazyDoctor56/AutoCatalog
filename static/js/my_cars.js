@@ -1,5 +1,3 @@
-// ---- МОЇ ОГОЛОШЕННЯ ----
-
 async function loadMyCars() {
     const list = document.getElementById("myCarsList");
     if (!list) return;

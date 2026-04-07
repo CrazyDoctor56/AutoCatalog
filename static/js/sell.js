@@ -1,5 +1,3 @@
-// ---- ПРОДАЖ АВТО ----
-
 let selectedFiles = [];
 
 function handlePhotos(input) {

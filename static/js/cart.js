@@ -1,5 +1,3 @@
-// ---- КОШИК ----
-
 async function loadCartItems() {
     const cartList       = document.getElementById("cartList");
     const cartTotal      = document.getElementById("cartTotal");

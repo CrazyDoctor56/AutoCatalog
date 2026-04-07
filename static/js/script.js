@@ -1,4 +1,3 @@
-// ---- РЕНДЕР КАРТОК З API ----
 async function loadCars(params = {}) {
     const grid = document.getElementById("carsGrid");
     if (!grid) return;
@@ -60,7 +59,6 @@ async function loadCars(params = {}) {
     }
 }
 
-// ---- ПОШУК ----
 function goSearch() {
     const input = document.getElementById("searchInput");
     if (!input) return;
@@ -94,7 +92,6 @@ function applyFilters() {
     loadCars(params);
 }
 
-// ---- ОБРАНЕ ----
 async function addToFavorites(carId) {
     const res = await fetch(`/api/favorites/${carId}`, { method: "POST" });
     if (res.ok) showToast("Додано в обране ❤️");
@@ -102,7 +99,6 @@ async function addToFavorites(carId) {
     else showToast("Вже в обраному");
 }
 
-// ---- КОШИК ----
 async function addToCart(carId) {
     const res = await fetch(`/api/cart/${carId}`, { method: "POST" });
     if (res.ok) showToast("Додано в кошик 🛒");
@@ -110,7 +106,6 @@ async function addToCart(carId) {
     else showToast("Вже в кошику");
 }
 
-// ---- TOAST ----
 function showToast(message) {
     let toast = document.getElementById("toast");
     if (!toast) {
@@ -132,7 +127,6 @@ function showToast(message) {
     setTimeout(() => { toast.style.opacity = "0"; }, 2500);
 }
 
-// ---- ІНІЦІАЛІЗАЦІЯ ----
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {

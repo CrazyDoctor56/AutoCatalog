@@ -9,7 +9,10 @@
 <body>
 <nav>
     <div class="nav-logo">🚗 AutoCatalog</div>
-    <div class="nav-links">
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
         <a href="/" data-lang="nav_home">Головна</a>
         <a href="/favorites" data-lang="nav_favorites">Обране</a>
         <a href="/cart" data-lang="nav_cart">Кошик</a>
@@ -75,5 +78,11 @@
 </footer>
 <script src="/static/js/lang.js"></script>
 <script src="/static/js/script.js"></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("open");
+    document.getElementById("burgerBtn").classList.toggle("open");
+}
+</script>
 </body>
 </html>

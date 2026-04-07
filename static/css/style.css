@@ -1,13 +1,5 @@
-/* ===========================
-   AutoCatalog — style.css
-   Спільні стилі для всіх сторінок
-   =========================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
 
-/* ===========================
-   CSS ЗМІННІ
-   =========================== */
 :root {
     --accent: #00ff99;
     --accent-dark: #00cc77;
@@ -23,9 +15,6 @@
     --transition: 0.3s ease;
 }
 
-/* ===========================
-   RESET & BASE
-   =========================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -53,9 +42,6 @@ button {
     font-family: 'Inter', sans-serif;
 }
 
-/* ===========================
-   НАВІГАЦІЯ
-   =========================== */
 nav {
     display: flex;
     justify-content: space-between;
@@ -108,9 +94,6 @@ nav {
     color: var(--accent);
 }
 
-/* ===========================
-   МОВНИЙ ПЕРЕМИКАЧ
-   =========================== */
 .lang-select {
     background: #222;
     color: var(--text);
@@ -129,9 +112,6 @@ nav {
     border-color: var(--accent);
 }
 
-/* ===========================
-   КНОПКИ
-   =========================== */
 .btn {
     display: inline-block;
     padding: 12px 28px;
@@ -164,9 +144,6 @@ nav {
     color: #000;
 }
 
-/* ===========================
-   КАРТКИ АВТО
-   =========================== */
 .cars-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -217,9 +194,6 @@ nav {
     margin-top: 8px !important;
 }
 
-/* ===========================
-   ПОШУК
-   =========================== */
 .search-input {
     padding: 12px 22px;
     width: 320px;
@@ -242,9 +216,6 @@ nav {
     color: var(--text-dim);
 }
 
-/* ===========================
-   ФІЛЬТРИ
-   =========================== */
 .filters {
     background: var(--bg-card);
     border-radius: var(--radius);
@@ -286,9 +257,6 @@ nav {
     border-color: var(--accent);
 }
 
-/* ===========================
-   КОНТЕЙНЕР
-   =========================== */
 .container {
     width: 95%;
     max-width: 1400px;
@@ -313,9 +281,6 @@ nav {
     margin-bottom: 20px;
 }
 
-/* ===========================
-   FOOTER
-   =========================== */
 footer {
     background: var(--bg-card);
     padding: 30px 20px;
@@ -371,9 +336,6 @@ footer {
     color: var(--accent);
 }
 
-/* ===========================
-   ФОРМИ (login, register)
-   =========================== */
 .form-container {
     max-width: 420px;
     margin: 60px auto;
@@ -429,9 +391,6 @@ footer {
     color: var(--accent);
 }
 
-/* ===========================
-   СТОРІНКА АВТО (car.html)
-   =========================== */
 .car-detail {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -478,9 +437,6 @@ footer {
     gap: 12px;
 }
 
-/* ===========================
-   КОШИК / ОБРАНЕ
-   =========================== */
 .cart-list,
 .favorites-list {
     display: flex;
@@ -524,26 +480,100 @@ footer {
     border: 1px solid rgba(0, 255, 153, 0.15);
 }
 
-/* ===========================
-   АДАПТИВ
-   =========================== */
-@media (max-width: 900px) {
-    .car-detail {
-        grid-template-columns: 1fr;
+.burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+}
+
+.burger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+.burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 1024px) {
+    .nav-links {
+        gap: 14px;
+    }
+    .nav-links a {
+        font-size: 14px;
     }
 }
 
 @media (max-width: 768px) {
     nav {
-        padding: 12px 15px;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    .burger {
+        display: flex;
     }
 
     .nav-links {
-        gap: 12px;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        width: 100%;
+        padding: 16px 0 8px;
+        border-top: 1px solid rgba(255,255,255,0.07);
+        margin-top: 10px;
     }
 
-    .filters-content {
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a,
+    .nav-links span {
+        font-size: 16px;
+    }
+
+    .lang-select {
+        width: 100%;
+        padding: 10px 16px;
+    }
+
+    .car-detail {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .hero-content p {
+        font-size: 15px;
+    }
+
+    .hero-search {
         flex-direction: column;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .page-title h1 {
+        font-size: 28px;
     }
 
     .top-bar {
@@ -552,21 +582,93 @@ footer {
         gap: 10px;
     }
 
-    .search-input {
+    .top-bar .search-input {
         width: 100%;
     }
 
+    .filters-content {
+        flex-direction: column;
+    }
+
+    .filters input,
+    .filters select {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .cars-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
     .form-container {
-        margin: 30px auto;
-        padding: 25px;
+        margin: 20px auto;
+        padding: 24px 18px;
     }
 
     .car-actions {
         flex-direction: column;
     }
+
+    .car-detail-info h1 {
+        font-size: 28px;
+    }
+
+    .car-detail-info .price {
+        font-size: 24px;
+    }
+
+    .sell-container {
+        padding: 0 16px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .my-car-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .my-car-item img {
+        width: 100%;
+        height: 160px;
+    }
+
+    .my-car-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .cart-item {
+        flex-wrap: wrap;
+    }
+
+    .cart-item img {
+        width: 100%;
+        height: 140px;
+    }
+
+    footer {
+        padding: 20px 16px;
+    }
+
+    .gallery-thumbs img {
+        width: 60px;
+        height: 42px;
+    }
 }
 
+@media (max-width: 400px) {
+    .hero-content h1 {
+        font-size: 28px;
+    }
 
+    .cars-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 .lang-btn {
     background: none;
@@ -590,9 +692,6 @@ footer {
     border-color: var(--accent);
 }
 
-/* ===========================
-   БЕЙДЖІ (в кошику / в обраному)
-   =========================== */
 .car-card-badges {
     display: flex;
     gap: 6px;
@@ -610,9 +709,6 @@ footer {
 .badge-fav  { background: rgba(255, 80, 80, 0.15); color: #ff6b6b; border: 1px solid rgba(255,80,80,0.3); }
 .badge-cart { background: rgba(0, 255, 153, 0.1);  color: var(--accent); border: 1px solid rgba(0,255,153,0.3); }
 
-/* ===========================
-   КНОПКА ВИДАЛЕННЯ З ОБРАНОГО
-   =========================== */
 .remove-fav-btn {
     position: absolute;
     top: 10px;
@@ -636,9 +732,6 @@ footer {
     background: rgba(255,80,80,0.3);
 }
 
-/* ===========================
-   ВІДСТУП ПІД КАРТКАМИ
-   =========================== */
 .cars-grid {
     margin-bottom: 40px;
 }
